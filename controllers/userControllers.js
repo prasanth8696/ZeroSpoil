@@ -1,4 +1,6 @@
 const asyncHandler = require("express-async-handler");
+const jwt = require("jsonwebtoken");
+//const bcrypt = require("bcrypt")
 const userModel = require("../models/userModels");
 const userExtendedModel = require("../models/userExtendedModels"); 
 const generateToken = require("../utils/generateToken");
@@ -10,7 +12,7 @@ const sendMail = require("../utils/emailHandler")
 const sendVerificationMail = async (currentUser) =>{
 
     try{    //send verification mail
-        const token = generateToken(64)
+        const token = generateToken(currentUser.email)
         const verificationUrl = `http://localhost:8000/api/users/verifyToken?token=${token}`
 
         const emailResult = await sendMail("Email Verification",currentUser.email, `<a>${verificationUrl}</a>`)
@@ -18,7 +20,7 @@ const sendVerificationMail = async (currentUser) =>{
         if (emailResult.status == "success"){
             currentUser.verificationToken = token
             const tokenExpiryTime = new Date()
-            tokenExpiryTime.setHours(tokenExpiryTime.getHours() + 6 )
+            tokenExpiryTime.setHours(tokenExpiryTime.getHours() + 2 )
             currentUser.verificationTokenExpire =  tokenExpiryTime
 
             await currentUser.save()
@@ -51,11 +53,13 @@ const userRegister = asyncHandler ( async (req,res) => {
         throw new Error("Email Address already taken")
     }
 
+    //const hashedPassword = bcrypt.hash(password,process.env.SALT_ROUNDS)
     const currentUser = await userModel.create({
         firstName,
         lastName,
         email,
         password,
+        //password: hashedPassword,
         userType,
         
     })
@@ -74,7 +78,7 @@ const userRegister = asyncHandler ( async (req,res) => {
     await currentUser.save()
     await extendedDetails.save()
     //send verification mail
-    sendVerificationMail(currentUser)
+    await sendVerificationMail(currentUser) //need to await
 
 
     res.status(201).json({statusCode: 201, "message": "user created sucesssfully", userDetails: { id: currentUser._id,firstName, lastName, email}})
@@ -92,23 +96,63 @@ const userLogin = asyncHandler (async (req,res) => {
         throw new Error("All fields are mandatory !")
     }
 
-    const user = await userModel.findOne({ email })
+    const currentUser = await userModel.findOne({ email })
 
-    if (user){
-        res.status(200)
-        res.status(200).json({messsage: "user successfully logged in"})
-    }
-    else{
+    if (!currentUser){
+
         res.status(404)
-        throw new Error("Email or passsword is incorrect")
+        throw new Error("Email address doesnt exists")
     }
+
+    if(! currentUser.isActive){
+        res.status(403)
+        throw new Error("Account is not Active")
+    }
+
+    if(! currentUser.isVerified){
+        if( currentUser.verificationTokenExpire && urrentUser.verificationTokenExpire.getTime() > (new Date()).getTime() ){
+            res.status(403)
+            throw new Error("Account is not verified,please check  verification mail in your mail Box")
+        }else{
+
+            await sendVerificationMail(currentUser)
+            res.status(403)
+            throw new Error("Account is not verified,please check  verification mail in your mail Box")
+
+        }
+        
+    }
+
+    //bcrypt.compare(password,currentUser.password)
+    if(password === currentUser.password){
+
+        const accessToken = jwt.sign({
+            user : {
+                id: currentUser.id,
+                email: currentUser.email,
+                userType: currentUser.userType
+            }
+
+        },
+        process.env.ACCESS_TOKEN_SECRET,
+        {
+            expiresIn: "30m"
+        }
+    )
+
+    res.status(200).json({ accessToken,message: "user successfully logged in" })
+
+    }else{
+        res.status(403)
+        throw new Error("Bad Crenditials")
+    }
+  
 
 })
 
 //@desc  verify user tokens
 //@routes //api/users/verifyToken
 //@access public
-
 const verifyUserToken = asyncHandler (async (req,res) => {
 
     const { token } = req.query
@@ -135,6 +179,8 @@ const verifyUserToken = asyncHandler (async (req,res) => {
     }
 
 } )
+
+
 module.exports = {
     userRegister,
     userLogin,

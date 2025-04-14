@@ -1,11 +1,13 @@
-const  generateToken = (n) => {
-    var chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-    var token = '';
-    for(var i = 0; i < n; i++) {
-        token += chars[Math.floor(Math.random() * chars.length)];
-    }
-    return token;
+const crypto = require("crypto")
+
+const generateToken = (data,algorithm="sha256") => {
+
+    const hash = crypto.createHash(algorithm)
+    const token = hash.update(data).digest('hex')
+
+    return token
 }
 
+console.log(generateToken("ayyappandharmavpm@gmail.co"))
 module.exports = generateToken
 
