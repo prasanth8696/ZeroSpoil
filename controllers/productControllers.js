@@ -9,7 +9,7 @@ const productModel = require("../models/productModel")
 const getAllProducts = asyncHandler( async (req,res) => {
 
     //based on the role need to give all the products
-    const products = productModel.find()
+    const products = await productModel.find({})
     res.json({products})
 })
 
@@ -20,7 +20,7 @@ const getAllProducts = asyncHandler( async (req,res) => {
 const getProductById = asyncHandler( async (req,res) => {
 
     const productId = req.params.id
-    const product = productModel.findById(productId)
+    const product = await productModel.findById(productId)
 
     if(! product){
         res.status(404)
@@ -46,6 +46,8 @@ const createProduct = asyncHandler( async (req,res) => {
             productType
     } = req.body
 
+    const currentUser = req.user 
+
     if ( ! name || ! price || ! stock || ! expiryDate || !unit){
 
         res.status(400)
@@ -65,7 +67,7 @@ const createProduct = asyncHandler( async (req,res) => {
         unit,
         productType,
         defaultTaxes: taxes,
-        ownerId: "67fd74c8561ebc2852dc30a5" //fornow
+        ownerId: currentUser._id
 
     }
 
@@ -77,18 +79,26 @@ const createProduct = asyncHandler( async (req,res) => {
 
 
 //@desc update the Product by ID
-//@route /api/product/:id
+//@route /api/products/:id
 //@method PUT
 //@access private
 
 const updateProduct = asyncHandler( async (req,res) => {
 
     const productId = req.params.id
+    const currentUser = req.user
     const currentProduct = await productModel.findById(productId)
+
 
     if(! currentProduct){
         res.status(404)
         throw new Error("Product Not Found")
+    }
+
+    //for now once implemented ABAC access control will remove this
+    if (currentUser._id != currentProduct.ownerId){
+        res.status(401)
+        throw new Error("Access denied")
     }
 
     const { name,
@@ -129,7 +139,14 @@ const updateProduct = asyncHandler( async (req,res) => {
 const deleteProduct = asyncHandler( async(req,res) => {
 
     const productId = req.params.id
+    const currentUser = req.user 
     const currentProduct = await productModel.findById(productId)
+
+    //for now once implemented ABAC access control will remove this
+    if (currentUser._id != currentProduct.ownerId){
+        res.status(401)
+        throw new Error("Access denied")
+    }
 
     if(! currentProduct){
         res.status(404)

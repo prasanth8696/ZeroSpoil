@@ -4,7 +4,8 @@ const taxSchema = mongoose.Schema({
 
     name: {
         type: String,
-        required: [true, "tax name is required"]
+        required: [true, "tax name is required"],
+        unique: [true,"tax name should be unique"]
     },
     description: {
         type: String
@@ -15,21 +16,27 @@ const taxSchema = mongoose.Schema({
         min: 0,
         max: 100
     },
-    cessAmt: {
+    cessRate: {
         type: String,
         min: 0,
         max: 100
     },
-    childTaxes: {
+    childTaxIds: {
         type: [mongoose.Types.ObjectId],
         populate: true,
         ref: "Tax"
     },
-    standAloneTax: {
+    isStandAloneTax: {
         type: Boolean,
-        deafult: true
-    } 
+        default: true
+    },
+    isChildTax: {
+        type: Boolean,
+        default: false
+    }
 
+},{
+    timestamps: true
 })
 
 const taxModel = mongoose.model("Tax",taxSchema)

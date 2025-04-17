@@ -110,7 +110,7 @@ const userLogin = asyncHandler (async (req,res) => {
     }
 
     if(! currentUser.isVerified){
-        if( currentUser.verificationTokenExpire && urrentUser.verificationTokenExpire.getTime() > (new Date()).getTime() ){
+        if( currentUser.verificationTokenExpire && currentUser.verificationTokenExpire.getTime() > (new Date()).getTime() ){
             res.status(403)
             throw new Error("Account is not verified,please check  verification mail in your mail Box")
         }else{
@@ -128,7 +128,7 @@ const userLogin = asyncHandler (async (req,res) => {
 
         const accessToken = jwt.sign({
             user : {
-                id: currentUser.id,
+                _id: currentUser._id,
                 email: currentUser.email,
                 userType: currentUser.userType
             }

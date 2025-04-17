@@ -3,18 +3,22 @@ const { getAllProducts,
 getProductById,
 createProduct,
 updateProduct,
-deleteProduct } = require("../controllers/productControllers")
+deleteProduct } = require("../controllers/productControllers");
+const verifyToken = require("../middleware/authentication")
+const taxRouter = require("./taxRoutes")
+
 const router =  express.Router()
+router.use("/taxes",taxRouter)
 
 
-router.get("/",getAllProducts)
+router.get("/",verifyToken,getAllProducts)
 
-router.get("/:id",getProductById)
+router.get("/:id",verifyToken,getProductById)
 
-router.post("/",createProduct)
+router.post("/",verifyToken,createProduct)
 
-router.put("/:id",updateProduct)
+router.put("/:id",verifyToken,updateProduct)
 
-router.delete("/:id",deleteProduct)
+router.delete("/:id",verifyToken,deleteProduct)
 
 module.exports =  router
