@@ -3,20 +3,25 @@ const { getAllBusiness,
 getBusinessById,
 getCurrentBusiness,
 businessLogin,
-businessRegister } = require("../controllers/businessControllers")
+businessRegister,
+verifyBusinessUserToken } = require("../controllers/businessControllers");
+const verifyToken = require("../middleware/authentication");
 
 router = express.Router()
 
 
-router.get("/", getAllBusiness);
 
-router.post("/register", businessRegister);
+router.post("/register",businessRegister);
 
 router.post("/login", businessLogin);
 
-router.get("/current",getCurrentBusiness);
+router.get("/verifyToken",verifyBusinessUserToken);
 
-router.get("/:id" ,getBusinessById);
+//router.get("/", verifyToken, getAllBusiness);
+
+//router.get("/current",verifyToken,getCurrentBusiness);
+
+//router.get("/:id" ,verifyToken,getBusinessById);
 
 
 module.exports = router;
