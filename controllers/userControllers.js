@@ -2,48 +2,29 @@ const asyncHandler = require("express-async-handler");
 const jwt = require("jsonwebtoken");
 //const bcrypt = require("bcrypt")
 const userModel = require("../models/userModels");
-const userExtendedModel = require("../models/userExtendedModels"); 
-const generateToken = require("../utils/generateToken");
-const sendMail = require("../utils/emailHandler")
+const userExtendedModel = require("../models/userExtendedModel"); 
+const { sendVerificationMail } = require("../utils/emailHandler");
 
 
-
-//send  verification mail
-const sendVerificationMail = async (currentUser) =>{
-
-    try{    //send verification mail
-        const token = generateToken(currentUser.email)
-        const verificationUrl = `http://localhost:8000/api/users/verifyToken?token=${token}`
-
-        const emailResult = await sendMail("Email Verification",currentUser.email, `<a>${verificationUrl}</a>`)
-
-        if (emailResult.status == "success"){
-            currentUser.verificationToken = token
-            const tokenExpiryTime = new Date()
-            tokenExpiryTime.setHours(tokenExpiryTime.getHours() + 2 )
-            currentUser.verificationTokenExpire =  tokenExpiryTime
-
-            await currentUser.save()
-        }else{
-            console.log(emailResult)
-        }
-    }catch(err){
-        console.log(err)
-    }
-
-} 
 
 //@desc  signup normal user
-//@routes //api/users/register
+//@routes /api/users/register
+//@method POST
 //@access public
 const userRegister = asyncHandler ( async (req,res) => {
 
-    const { firstName,lastName,email, password,userType } = req.body
+    const { firstName,
+        lastName,
+        email,
+        password,
+        userType,
+        address,
+        phone } = req.body
 
-    if( ! firstName || !lastName || !email || !password ){
+    if( ! firstName || !lastName || !email || !password || ! address ){
 
         res.status(400);
-        throw new Error("All fields are madatory !")
+        throw new Error("All fields are mandatory !")
     }
 
     const User = await userModel.findOne({ email })
@@ -64,13 +45,11 @@ const userRegister = asyncHandler ( async (req,res) => {
         
     })
 
-    const { address, phone } = req.body
-
     const extendedDetails = await  userExtendedModel.create({
         userId: currentUser._id,
         address,
         phone,
-        userType: "user"
+        accountType: "user"
     })
 
 
@@ -86,6 +65,7 @@ const userRegister = asyncHandler ( async (req,res) => {
 
 //@desc  login normal user
 //@routes //api/users/login
+//@method POST
 //@access public
 const userLogin = asyncHandler (async (req,res) => {
 
@@ -128,9 +108,12 @@ const userLogin = asyncHandler (async (req,res) => {
 
         const accessToken = jwt.sign({
             user : {
-                _id: currentUser._id,
-                email: currentUser.email,
-                userType: currentUser.userType
+                _id : currentUser._id,
+                email : currentUser.email,
+                userType : currentUser.userType,
+                isBusinessUser : currentUser.isBusinessUser,
+                accountType : currentUser.accountType
+
             }
 
         },

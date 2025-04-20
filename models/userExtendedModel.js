@@ -7,10 +7,10 @@ const userExtendedSchema = mongoose.Schema(
             required: true
         },
 
-        userType: {
+        accountType: {
             type: String,
             enum: ["user", "business"],
-            required: [true, "user type should not be empty"]
+            required: [true, "account type should not be empty"]
         },
 
         phone: {
@@ -24,7 +24,7 @@ const userExtendedSchema = mongoose.Schema(
             zipCode: String,  
             country: String,
             coordinates: String
-        }
+        },
     },
     {
         timestamps: true,

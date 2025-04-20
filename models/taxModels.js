@@ -17,7 +17,7 @@ const taxSchema = mongoose.Schema({
         max: 100
     },
     cessRate: {
-        type: String,
+        type: Number,
         min: 0,
         max: 100
     },

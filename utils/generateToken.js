@@ -8,6 +8,5 @@ const generateToken = (data,algorithm="sha256") => {
     return token
 }
 
-console.log(generateToken("ayyappandharmavpm@gmail.co"))
 module.exports = generateToken
 

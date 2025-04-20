@@ -1,4 +1,5 @@
 const nodemailer = require("nodemailer");
+const generateToken = require("../utils/generateToken");
 
 
 const transporter = nodemailer.createTransport({
@@ -11,23 +12,7 @@ const transporter = nodemailer.createTransport({
     },
   });
 
-//   async function main() {
-//     // send mail with defined transport object
-//     const info = await transporter.sendMail({
-//       from: 'ayyappand464@gmail.com', // sender address
-//       to: "ayyappandharmavpm@gmail.com", // list of receivers
-//       subject: "Hello ✔", // Subject line
-//       text: "Hello world?", // plain text body
-//       html: "<b>Hello world?</b>", // html body
-//     });
-  
-//     console.log("Message sent: %s", info.messageId);
-//     // Message sent: <d786aa62-4e0a-070a-47ed-0b0666549519@ethereal.email>
-//   }
-  
-//   main().catch(console.error);
-
-  const sendMail = async (subject,toAddress,body) => {
+const sendMail = async (subject,toAddress,body) => {
 
     try{
         const info = await transporter.sendMail({
@@ -53,4 +38,31 @@ const transporter = nodemailer.createTransport({
     }
   }
 
-  module.exports = sendMail
+const sendVerificationMail = async (currentUser,) =>{
+
+    try{    //send verification mail
+        const token = generateToken(currentUser.email)
+        const verificationUrl = currentUser.accountType === "user" ? `${process.env.FRONTEND_URL}/users/verifyToken?token=${token}` : `${process.env.FRONTEND_URL}/business/verifyToken?token=${token}`
+
+        const emailResult = await sendMail("Email Verification",currentUser.email, `<a>${verificationUrl}</a>`)
+
+        if (emailResult.status == "success"){
+            currentUser.verificationToken = token
+            const tokenExpiryTime = new Date()
+            tokenExpiryTime.setHours(tokenExpiryTime.getHours() + 2 )
+            currentUser.verificationTokenExpire =  tokenExpiryTime
+
+            await currentUser.save()
+        }else{
+            console.log(emailResult)
+        }
+    }catch(err){
+        console.log(err)
+    }
+
+} 
+
+  module.exports = {
+    sendVerificationMail,
+    sendMail
+  }

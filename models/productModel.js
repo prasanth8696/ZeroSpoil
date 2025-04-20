@@ -58,6 +58,7 @@ const productSchema = mongoose.Schema(
         },
         ownerId : {
             type: mongoose.Types.ObjectId,
+            ref: "Business",
             required: [true,"please provide the owner of the product"]
         },
 

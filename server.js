@@ -3,9 +3,10 @@ const dotenv = require("dotenv").config();
 const connectDB = require("./config/dbConnection");
 const businessRouter =  require("./routes/businessRoutes");
 const userRouter = require("./routes/userRoutes")
+const donationRouter = require("./routes/donationRoutes")
 const productRouter = require("./routes/productRoutes")
 const errorHandler = require("./middleware/errorHandler")
-const sendMail = require("./utils/emailHandler") // fornow
+const { sendMail } = require("./utils/emailHandler") // fornow
 
 //Establish database connection
 connectDB();
@@ -15,6 +16,7 @@ app.use(express.json())
 app.use("/api/business" ,businessRouter)
 app.use("/api/users",userRouter)
 app.use("/api/products",productRouter)
+app.use("/api/donations",donationRouter)
 app.use(errorHandler)
 
 
