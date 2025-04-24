@@ -1,36 +1,71 @@
-import React from "react";
+// src/components/Communities.js
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 import { Link } from "react-router-dom";
-import logoIndianFood from "../Components/Images/360_F_469998410_dS3rIFPywmpTDYYr7VY6wd1SlV6c7Fa7.webp";
-import logoDonatorsWorld from "../Components/Images/360_F_469998410_dS3rIFPywmpTDYYr7VY6wd1SlV6c7Fa7.webp";
-import logoKFC from "../Components/Images/360_F_700484707_STl5CADexXsrdy6fsXxG9d9koQPr8Lfc.webp";
-import logoTexasChicken from "../Components/Images/360_F_747360721_GFQezZsLhZNBHLNISaOplwV29r7GSv0d.webp";
-import logoBurgerKing from "../Components/Images/image6.webp";
-import logoShaurma from "../Components/Images/pexels-diva-plavalaguna-6150432.jpg";                                 
+
+const PEXELS_API_KEY = import.meta.env.VITE_PEXELS_API_KEY;
+
 const communities = [
-  { name: "Indian food donators", logo: logoIndianFood  },
-  { name: "Donators world", logo: logoDonatorsWorld  },
-  { name: "KFC West London", logo: logoKFC },
-  { name: "Texas Chicken", logo: logoTexasChicken },
-  { name: "Burger King", logo: logoBurgerKing },
-  { name: "Shaurma 1", logo: logoShaurma },
+  { name: "Indian food donators" },
+  { name: "Donators world" },
+  { name: "KFC West London" },
+  { name: "Texas Chicken" },
+  { name: "Burger King" },
+  { name: "Shaurma 1" },
 ];
 
 const Communities = () => {
+  const [communityLogos, setCommunityLogos] = useState([]);
+
+  useEffect(() => {
+    const fetchImages = async () => {
+      const updated = await Promise.all(
+        communities.map(async (community) => {
+          try {
+            const res = await axios.get('https://api.pexels.com/v1/search', {
+              headers: {
+                Authorization: PEXELS_API_KEY,
+              },
+              params: {
+                query: community.name,
+                per_page: 1,
+              },
+            });
+            const photo = res.data.photos[0];
+            return {
+              ...community,
+              image: photo?.src?.medium || '', // fallback
+            };
+          } catch (err) {
+            console.error(`Error loading image for ${community.name}:`, err);
+            return { ...community, image: '' };
+          }
+        })
+      );
+      setCommunityLogos(updated);
+    };
+
+    fetchImages();
+  }, []);
+
   return (
     <div className="container mx-auto py-10">
-      <h2 className="text-2xl font-bold mb-5 text-center">
-        Communities in Zero spoil
+      <h2 className="text-2xl font-bold mb-5 text-center text-gray-800 dark:text-white">
+      
+        Communities in Zero Spoil
       </h2>
       <div className="flex flex-wrap justify-center gap-5">
-        {communities.map((community, index) => (
+        {communityLogos.map((community, index) => (
           <Link to="/communities" key={index}>
-            <div className="w-36 md:w-48 bg-white rounded-lg shadow-lg p-3 text-center cursor-pointer hover:shadow-xl transition">
+            <div className="w-36 md:w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg p-3 text-center cursor-pointer hover:shadow-xl transition">
               <img
-                src={community.logo}
+                src={community.image}
                 alt={community.name}
-                className="w-full h-20 object-contain"
+                className="w-full h-20 object-cover rounded"
               />
-              <p className="mt-2 text-sm font-semibold">{community.name}</p>
+              <p className="mt-2 text-sm font-semibold text-gray-800 dark:text-white">
+                {community.name}
+              </p>
             </div>
           </Link>
         ))}

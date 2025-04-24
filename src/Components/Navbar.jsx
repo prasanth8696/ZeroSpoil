@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { FaBars, FaTimes } from "react-icons/fa";
+import { FaBars, FaTimes, FaShoppingCart } from "react-icons/fa";
 import Modal from "./Modal";
 import DarkModeToggle from "./DarkModeToggle";
 
@@ -31,35 +31,39 @@ const Navbar = ({ isAuthenticated, userType, setIsAuthenticated }) => {
           <Link to="/" className="text-2xl font-bold text-green-600">
             ZeroSpoil
           </Link>
-          
+
           <div className="hidden md:flex space-x-6">
-            <Link to="/" className="text-gray-700 dark:text-white">
-            
-            Home</Link>
+            <Link to="/" className="text-gray-700 dark:text-white">Home</Link>
             {userType !== "user" && (
               <Link to="/communities" className="text-gray-700 dark:text-white">Community</Link>
             )}
             {userType === "restaurant" && (
               <Link to="/dashboard" className="text-gray-700 dark:text-white">Dashboard</Link>
             )}
-            {userType !== "admin" && (
-              <Link to="/" className="text-gray-700 dark:text-white">   </Link>
-            )}
           </div>
 
           <div className="flex items-center space-x-4">
-            <DarkModeToggle />
-            {!isAuthenticated ? (
-              <button onClick={() => openModal("login")} className="text-gray-700 dark:text-white">Login / Signup</button>
-            ) : (
-              <button onClick={handleLogout} className="text-red-500">Logout</button>
-            )}
-            <button onClick={() => setIsOpen(!isOpen)} className="md:hidden text-gray-700 dark:text-white">
-              {isOpen ? <FaTimes size={24} /> : <FaBars size={24} />}
-            </button>
-          </div>
+  {isAuthenticated && userType === "user" && (
+    <Link to="/cart" className="text-gray-700 dark:text-white">
+      <FaShoppingCart size={22} />
+    </Link>
+  )}
+
+  <DarkModeToggle />
+
+  {!isAuthenticated ? (
+    <button onClick={() => openModal("login")} className="text-gray-700 dark:text-white">Login / Signup</button>
+  ) : (
+    <button onClick={handleLogout} className="text-red-500">Logout</button>
+  )}
+
+  <button onClick={() => setIsOpen(!isOpen)} className="md:hidden text-gray-700 dark:text-white">
+    {isOpen ? <FaTimes size={24} /> : <FaBars size={24} />}
+  </button>
+</div>
         </div>
       </div>
+
       {modalOpen && (
         <Modal 
           type={modalType} 
