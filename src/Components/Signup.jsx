@@ -16,7 +16,8 @@ const Signup = ({ setIsAuthenticated, setUserType }) => {
       navigate("/dashboard"); // Redirect restaurant users to dashboard
     }
   };
-
+  
+  
   return (
     <div className="flex justify-center items-center h-screen bg-gray-100 dark:bg-gray-900">
       <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg w-96">
@@ -30,12 +31,7 @@ const Signup = ({ setIsAuthenticated, setUserType }) => {
             className="w-full p-2 border rounded mt-3 dark:bg-gray-700 dark:text-white"
           />
         )}
-        <input
-            type="text"
-            placeholder="User Name "
-            onChange={(e) => setUserName(e.target.value)}
-            className="w-full p-2 border rounded mt-3 dark:bg-gray-700 dark:text-white"
-          />
+        
         <input
           type="text"
           placeholder="First Name"
