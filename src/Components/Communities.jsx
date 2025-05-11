@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
+<<<<<<< HEAD
 
 const PEXELS_API_KEY = import.meta.env.VITE_PEXELS_API_KEY;
 
@@ -13,6 +14,12 @@ const communities = [
   { name: "Burger King" },
   { name: "Shaurma 1" },
 ];
+=======
+import  {communities} from './Community';
+const PEXELS_API_KEY = import.meta.env.VITE_PEXELS_API_KEY;
+
+
+>>>>>>> 74d09c4 (Initial commit)
 
 const Communities = () => {
   const [communityLogos, setCommunityLogos] = useState([]);
@@ -74,4 +81,8 @@ const Communities = () => {
   );
 };
 
+<<<<<<< HEAD
 export default Communities;
+=======
+export default Communities;
+>>>>>>> 74d09c4 (Initial commit)

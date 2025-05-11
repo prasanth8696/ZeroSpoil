@@ -73,4 +73,8 @@ const AvailableFor = () => {
   );
 };
 
+<<<<<<< HEAD
 export default AvailableFor;
+=======
+export default AvailableFor;
+>>>>>>> 74d09c4 (Initial commit)
