@@ -1,10 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-<<<<<<< HEAD
-import { FaBars, FaTimes, FaShoppingCart } from "react-icons/fa";
-=======
 import { FaBars, FaTimes, FaShoppingCart, FaUserCircle } from "react-icons/fa";
->>>>>>> 74d09c4 (Initial commit)
 import Modal from "./Modal";
 import DarkModeToggle from "./DarkModeToggle";
 
@@ -12,10 +8,7 @@ const Navbar = ({ isAuthenticated, userType, setIsAuthenticated }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const [modalType, setModalType] = useState("");
-<<<<<<< HEAD
-=======
   const [profileOpen, setProfileOpen] = useState(false);
->>>>>>> 74d09c4 (Initial commit)
   const navigate = useNavigate();
 
   const openModal = (type) => {
@@ -33,11 +26,7 @@ const Navbar = ({ isAuthenticated, userType, setIsAuthenticated }) => {
   };
 
   return (
-<<<<<<< HEAD
-    <nav className="bg-white dark:bg-gray-900 border-b border-gray-300 dark:border-gray-700">
-=======
     <nav className="bg-white dark:bg-gray-900 border-b border-gray-300 dark:border-gray-700 relative z-50">
->>>>>>> 74d09c4 (Initial commit)
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <Link to="/" className="text-2xl font-bold text-green-600">
@@ -54,27 +43,6 @@ const Navbar = ({ isAuthenticated, userType, setIsAuthenticated }) => {
             )}
           </div>
 
-<<<<<<< HEAD
-          <div className="flex items-center space-x-4">
-  {isAuthenticated && userType === "user" && (
-    <Link to="/cart" className="text-gray-700 dark:text-white">
-      <FaShoppingCart size={22} />
-    </Link>
-  )}
-
-  <DarkModeToggle />
-
-  {!isAuthenticated ? (
-    <button onClick={() => openModal("login")} className="text-gray-700 dark:text-white">Login / Signup</button>
-  ) : (
-    <button onClick={handleLogout} className="text-red-500">Logout</button>
-  )}
-
-  <button onClick={() => setIsOpen(!isOpen)} className="md:hidden text-gray-700 dark:text-white">
-    {isOpen ? <FaTimes size={24} /> : <FaBars size={24} />}
-  </button>
-</div>
-=======
           <div className="flex items-center space-x-4 relative">
             {isAuthenticated && userType === "user" && (
               <Link to="/cart" className="text-gray-700 dark:text-white">
@@ -130,22 +98,14 @@ const Navbar = ({ isAuthenticated, userType, setIsAuthenticated }) => {
               {isOpen ? <FaTimes size={24} /> : <FaBars size={24} />}
             </button>
           </div>
->>>>>>> 74d09c4 (Initial commit)
         </div>
       </div>
 
       {modalOpen && (
-<<<<<<< HEAD
-        <Modal 
-          type={modalType} 
-          closeModal={closeModal} 
-          setIsAuthenticated={setIsAuthenticated} 
-=======
         <Modal
           type={modalType}
           closeModal={closeModal}
           setIsAuthenticated={setIsAuthenticated}
->>>>>>> 74d09c4 (Initial commit)
           navigate={navigate}
         />
       )}
