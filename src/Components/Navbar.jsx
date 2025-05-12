@@ -4,6 +4,8 @@ import { FaBars, FaTimes, FaShoppingCart, FaUserCircle } from "react-icons/fa";
 import Modal from "./Modal";
 import DarkModeToggle from "./DarkModeToggle";
 
+
+
 const Navbar = ({ isAuthenticated, userType, setIsAuthenticated }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
@@ -72,7 +74,7 @@ const Navbar = ({ isAuthenticated, userType, setIsAuthenticated }) => {
                       className="block px-4 py-2 text-sm text-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
                       onClick={() => setProfileOpen(false)}
                     >
-                      Profile
+                     Profile
                     </Link>
                     {userType === "restaurant" && (
                       <Link

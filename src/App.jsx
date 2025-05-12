@@ -8,6 +8,7 @@ import Signup from "./Components/Signup";
 import AvailableFor from "./Components/AvailableFor";
 import AddItemsPage from "./Components/AddItemsPage";
 import Cart from "./Components/Cart";
+import Profile from "./Components/Profile/Profile";
 
 const App = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -42,7 +43,7 @@ const App = () => {
             
             <Route path="/signup/:type" element={<Signup setIsAuthenticated={setIsAuthenticated} setUserType={setUserType} />} />
            
-            <Route path="/profile" element={isAuthenticated ? <h1 className="text-center">Profile</h1> : <Navigate to="/" />} />
+            <Route path="/profile" element={isAuthenticated ? <Profile/> : <Navigate to="/" />} />
             <Route path="/register" element={<h1 className="text-center">Register</h1>} />
             <Route path="/communities" element={<Communities />} />
             <Route path="/availablefree" element={<AvailableFor />} />
